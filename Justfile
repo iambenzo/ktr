@@ -1,6 +1,13 @@
 _default:
     just -l
 
+tmux:
+    tmux new -Pd -s ktr -n code
+    tmux send-keys -t ktr:1 "vim" Enter
+    tmux neww -Pd -t ktr -F 2 -n watch
+    tmux send-keys -t ktr:2 "just watch" Enter
+    tmux attach -d -t ktr
+
 # info: https://github.com/watchexec/cargo-watch
 # start cargo watch
 watch:
@@ -10,10 +17,6 @@ watch:
 cover:
     cargo tarpaulin -o html
     firefox ./tarpaulin-report.html
-
-# install/update git hooks
-hooks:
-    cp ./git-hooks/* ./.git/hooks/
 
 # format and check for syntax enhancements
 tidy:
