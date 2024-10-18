@@ -1,0 +1,15 @@
+[package]
+name = "ktr"
+description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
+keywords = ["kindle", "highlights", "zettelkasten"]
+version = "0.1.0"
+edition = "2021"
+authors = ["Ben Burbage"]
+publish = false
+
+[lib]
+name = "kindle_clippings"
+path = "src/lib.rs"
+
+[dependencies]
+clap = { version = "4.5.20", features = ["derive"] }
