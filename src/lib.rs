@@ -137,7 +137,9 @@ Smidgen the pigeon
         let library = parse_clippings(get_input());
         assert_eq!(1, library.len());
 
-        let book = library.get("The 5 AM Club: Own Your Morning. Elevate Your Life.").unwrap();
+        let book = library
+            .get("The 5 AM Club: Own Your Morning. Elevate Your Life.")
+            .unwrap();
 
         assert_eq!("Sharma, Robin".to_string(), book.author());
         assert_eq!(5, book.highlights().len());
