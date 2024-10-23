@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 
-#[derive(Debug, Clone)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Note {
     page: u64,
     location: u64,
@@ -29,7 +31,7 @@ impl Note {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct HighlightLocation(u64, u64);
 
 impl HighlightLocation {
@@ -44,11 +46,11 @@ impl HighlightLocation {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Highlight {
     page: u64,
     location: HighlightLocation,
-    quote: Option<String>,
+    quote: String,
     note: Option<Note>,
 }
 
@@ -57,7 +59,7 @@ impl Highlight {
         Highlight {
             page,
             location,
-            quote: Some(quote),
+            quote,
             note: None,
         }
     }
@@ -75,7 +77,7 @@ impl Highlight {
     }
 
     pub fn add_quote(&mut self, quote: String) {
-        self.quote = Some(quote);
+        self.quote = quote;
     }
 
     fn add_note(&mut self, note: Note) {
@@ -109,6 +111,10 @@ impl Book {
 
     pub fn highlights(&self) -> &BTreeMap<HighlightLocation, Highlight> {
         &self.highlights
+    }
+
+    pub fn quotes(&self) -> Vec<String> {
+        self.highlights.values().map(|h| h.quote.clone()).collect()
     }
 
     pub fn add_highlight(&mut self, highlight: Highlight) {

@@ -2,42 +2,30 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::fs::{self};
 use std::io::{self};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use self::model::{Book, Highlight, HighlightLocation, Note};
 
 pub mod model;
+pub mod output;
 
-pub fn run(clippings: PathBuf, _template: Option<PathBuf>) {
-    if let Ok(s) = read_file_string(clippings) {
-        let books = parse_clippings(s);
-
-        for (_, book) in books.iter() {
-            println!(
-                "{} by {} has {} highlights",
-                book.title(),
-                book.author(),
-                book.highlights().len()
-            );
-        }
-    } else {
-        panic!("error reading file");
-    }
-}
-
-fn read_file_string<P>(filename: P) -> io::Result<Vec<String>>
+/// read a clippings file and return it as a [Vec<String>]
+pub fn read_file_string<P>(filename: P) -> io::Result<Vec<String>>
 where
     P: AsRef<Path>,
 {
     Ok(fs::read_to_string(filename)?
         .replace("\r\n", " ") // clean line endings
+        .replace("\n", " ")
         .replace("\u{feff}", "") // clean the BOM
         .split("==========")
         .map(String::from)
         .collect())
 }
 
-fn parse_clippings(clippings: Vec<String>) -> HashMap<String, Book> {
+/// using a [Vec<String>] as the input, return a [HashMap<String, Book>] where the [String]
+/// represents the book's title
+pub fn parse_clippings(clippings: Vec<String>) -> HashMap<String, Book> {
     let mut library: HashMap<String, Book> = HashMap::new();
 
     let re_highlights = Regex::new(r"\s*(?<title>.*)\s\((?<author>.*,.*)\) - Your Highlight on page (?<page>\d+) \| location (?<loc_start>\d+)-(?<loc_end>\d+) \| Added on (?<timestamp>.+ \d{4} \d{2}:\d{2}:\d{2})\s+(?<quote>.*)\s*").unwrap();
@@ -79,7 +67,6 @@ fn parse_clippings(clippings: Vec<String>) -> HashMap<String, Book> {
         }
     }
 
-    println!("library length: {}", library.len());
     library
 }
 
@@ -128,7 +115,6 @@ Smidgen the pigeon
             .map(String::from)
             .collect();
 
-        dbg!(&input);
         input
     }
 
