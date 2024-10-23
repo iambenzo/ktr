@@ -1,4 +1,5 @@
 use clap::Parser;
+use kindle_clippings::run;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -13,10 +14,11 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
+    run(cli.file, cli.template);
+}
 
-    println!("Clippings file: {:?}", cli.file);
-
-    if let Some(template) = cli.template {
-        println!("Template file: {:?}", template);
-    }
+#[test]
+fn verify_cli() {
+    use clap::CommandFactory;
+    Cli::command().debug_assert();
 }
