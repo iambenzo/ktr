@@ -1,6 +1,7 @@
 _default:
     just -l
 
+# start tmux session
 tmux:
     tmux new -Pd -s ktr -n code
     tmux send-keys -t ktr:1 "vim" Enter
@@ -22,3 +23,7 @@ cover:
 tidy:
     cargo fmt
     cargo clippy
+
+# remove test artifacts
+clean:
+    rm -r output/
