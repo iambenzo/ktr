@@ -1,18 +1,25 @@
-[package]
-name = "ktr"
-description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
-keywords = ["kindle", "highlights", "zettelkasten"]
-version = "0.1.0"
-edition = "2021"
-authors = ["Ben Burbage"]
-publish = false
+# [package]
+# name = "ktr"
+# description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
+# keywords = ["kindle", "highlights", "zettelkasten"]
+# version = "0.1.0"
+# edition = "2021"
+# authors = ["Ben Burbage"]
+# publish = false
+#
+# [lib]
+# name = "kindle_clippings"
+# path = "src/lib.rs"
+#
+# [dependencies]
+# clap = { version = "4.5.20", features = ["derive"] }
+# regex = "1.11.0"
+# tera = { version = "1.20.0", default-features = false }
+# serde = { version = "1.0", features = ["derive"] }
 
-[lib]
-name = "kindle_clippings"
-path = "src/lib.rs"
-
-[dependencies]
-clap = { version = "4.5.20", features = ["derive"] }
-regex = "1.11.0"
-tera = { version = "1.20.0", default-features = false }
-serde = { version = "1.0", features = ["derive"] }
+[workspace]
+members = [
+  "kindle_clippings",
+  "cli",
+]
+resolver = "2"

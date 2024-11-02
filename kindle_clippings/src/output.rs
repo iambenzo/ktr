@@ -1,9 +1,14 @@
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
+use chrono::Utc;
 use tera::{Context, Tera};
 
 use crate::model::{Book, Highlight};
+
+fn now_date() -> String {
+    format!("{}", Utc::now().format("%Y-%m-%d"))
+}
 
 /// Uses a [Book] and optionally a [PathBuf] to a custom template file to render the highlights and
 /// notes captured whilst reading to a file in the output [Path].
@@ -15,6 +20,7 @@ pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path)
         .unwrap();
 
     let mut ctx = Context::new();
+    ctx.insert("date", &now_date());
     ctx.insert(
         "highlights",
         &book
@@ -33,7 +39,6 @@ pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path)
         Ok(f) => f,
         Err(e) => {
             eprintln!("Error creating output file: {}", e);
-            // dbg!(e);
             ::std::process::exit(1);
         }
     };
@@ -48,7 +53,6 @@ pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path)
 
     if let Err(e) = output {
         eprintln!("Parsing error(s): {}", e);
-        // dbg!(e);
         ::std::process::exit(1);
     }
 }

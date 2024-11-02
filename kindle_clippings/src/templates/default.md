@@ -1,7 +1,6 @@
 ---
 tags: 
-created:
-  "{ date }": 
+created: {{ date }}
 type: kindle
 ---
 

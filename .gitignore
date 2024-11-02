@@ -1,2 +1,2 @@
-/target
+**/target
 tarpaulin-report.html

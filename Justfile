@@ -21,7 +21,7 @@ cover:
 
 # format and check for syntax enhancements
 tidy:
-    cargo fmt
+    cargo fmt --all
     cargo clippy
 
 # remove test artifacts
