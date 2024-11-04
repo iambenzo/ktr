@@ -21,5 +21,6 @@
 members = [
   "kindle_clippings",
   "cli",
+  "gui",
 ]
 resolver = "2"

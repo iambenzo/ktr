@@ -14,7 +14,11 @@ fn now_date() -> String {
 /// notes captured whilst reading to a file in the output [Path].
 ///
 /// Will use a default template if a custom template isn't provided.
-pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path) {
+pub fn render_output(
+    book: &Book,
+    template: &Option<PathBuf>,
+    output_dir: &Path,
+) -> Result<(), RenderError> {
     let mut tera = Tera::default();
     tera.add_raw_template("default", include_str!("templates/default.md"))
         .unwrap();
@@ -38,8 +42,9 @@ pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path)
     let file: File = match File::create(file_path.as_path()) {
         Ok(f) => f,
         Err(e) => {
-            eprintln!("Error creating output file: {}", e);
-            ::std::process::exit(1);
+            return Err(RenderError::CreateOutputFileFailed(e.to_string()));
+            // eprintln!("Error creating output file: {}", e);
+            // ::std::process::exit(1);
         }
     };
 
@@ -52,7 +57,24 @@ pub fn render_output(book: &Book, template: &Option<PathBuf>, output_dir: &Path)
     }
 
     if let Err(e) = output {
-        eprintln!("Parsing error(s): {}", e);
-        ::std::process::exit(1);
+        return Err(RenderError::ParsingFailed(e.to_string()));
+        // eprintln!("Parsing error(s): {}", e);
+        // ::std::process::exit(1);
+    }
+
+    Ok(())
+}
+
+pub enum RenderError {
+    CreateOutputFileFailed(String),
+    ParsingFailed(String),
+}
+
+impl std::fmt::Display for RenderError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            RenderError::CreateOutputFileFailed(s) => write!(f, "{}", s),
+            RenderError::ParsingFailed(s) => write!(f, "{}", s),
+        }
     }
 }

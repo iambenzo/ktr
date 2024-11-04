@@ -56,7 +56,10 @@ pub fn run(clippings: PathBuf, template: Option<PathBuf>, output_dir: &Path) {
         let books = parse_clippings(s);
 
         for (_, book) in books.iter() {
-            render_output(book, &template, output_dir);
+            if let Err(e) = render_output(book, &template, output_dir) {
+                eprintln!("{}", e);
+                ::std::process::exit(1);
+            }
         }
     } else {
         panic!("error reading file");
