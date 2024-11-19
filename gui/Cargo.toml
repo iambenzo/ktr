@@ -1,0 +1,14 @@
+[package]
+name = "ktr_gui"
+description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
+keywords = ["kindle", "highlights", "zettelkasten"]
+version = "0.1.0"
+edition = "2021"
+authors = ["Ben Burbage"]
+publish = false
+
+[dependencies]
+iced = {version="0.13.1", features = ["tokio", "advanced"]}
+kindle_clippings = { path = "../kindle_clippings"}
+rfd = "0.15.0"
+# tokio = { version = "1.41.1", features = ["rt"] }

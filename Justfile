@@ -19,6 +19,11 @@ cover:
     cargo tarpaulin -o html
     firefox ./tarpaulin-report.html
 
+# build and run gui app
+gui:
+    cargo build
+    ./target/debug/ktr_gui
+
 # format and check for syntax enhancements
 tidy:
     cargo fmt --all
