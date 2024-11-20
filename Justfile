@@ -32,3 +32,7 @@ tidy:
 # remove test artifacts
 clean:
     rm -r output/
+
+# build all and package gui
+package:
+    cargo packager --release

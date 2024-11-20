@@ -1,18 +1,53 @@
-# KTR
+<div align="center">
+  <img src="./gui/assets/logo.png" alt="Logo" style="width: 30%">
+</div>
 
-The idea of this utility is to convert the highlights I've made in my Kindle to a format that I can use in my Zettelkasten (Obsidian).
+# Kindle to References (KTR)
+
+The idea of this utility is to convert the highlights I've made in my Kindle to a format that I can use in my Zettelkasten ([Obsidian](https://obsidian.md)).
 
 ## Installation
 
-There are no binaries currently provided via a github release, the only way to install is via `cargo`:
+### Cargo
+
+The cleanest way to install KTR is via `cargo`:
 
 ```sh
-cargo install --git https://github.com/iambenzo/ktr.git --branch main
+cargo install --git https://github.com/iambenzo/ktr.git --branch main ktr # for cli
+cargo install --git https://github.com/iambenzo/ktr.git --branch main ktr_gui # for gui
 ```
 
-This will install the `ktr` CLI tool and a `ktr_gui` GUI tool.
+Or via [cargo-packager](https://github.com/crabnebula-dev/cargo-packager) for the GUI:
 
-> If there's demand, I'll create a release action.
+```sh
+cargo install cargo-packager
+cargo packager --release
+```
+
+This will give you a package that you can install for your platform under `./target/release/`.
+
+### GitHub Releases
+
+There are [Releases](https://github.com/iambenzo/ktr/releases/latest) available. However, none of the applications are signed, which may mean you have to do some "unblocking" before you can run the apps on your machine. I haven't found this to be an issue on Linux.
+
+#### Unblocking on Mac
+
+Simply remove the quarantine flag that is put on the executable/dmg file:
+
+```sh
+xattr -d com.apple.quarantine <dmg_or_cli>
+```
+
+You may also need to:
+
+```sh
+chmod +x <dmg_or_cli>
+```
+
+#### Unblocking on Windows
+
+Right-click on the `.exe` file and select "Properties". Under the "General" tab, you'll see a checkbox near the bottom of the window labelled "Unblock" - click it. Once you done that, click "Apply" and then "Okay".
+
 
 ## Usage
 
@@ -42,9 +77,6 @@ Options:
   -h, --help                      Print help
   -V, --version                   Print version
 ```
-
-> [!WARNING]
-> The error messages aren't pretty.
 
 ### GUI
 

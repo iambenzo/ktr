@@ -1,0 +1,123 @@
+name: Release Me!
+
+on:
+    workflow_dispatch:
+
+env:
+    VERSION: 0.1.0
+
+jobs:
+  release:
+    permissions: write-all
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            cli-name: ktr
+            cli-artifact: ktr_mac_aarch64
+          - platform: macos-13
+            cli-name: ktr
+            cli-artifact: ktr_mac_x64
+          - platform: ubuntu-latest
+            cli-name: ktr
+            cli-artifact: ktr_linux_amd64
+          - platform: windows-latest
+            cli-name: ktr.exe
+            cli-artifact: ktr_win_x64.exe
+          # platform:
+          #     [macos-latest, macos-13, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y build-essential gcc libxcb-composite0-dev libgtk-3-dev
+        # run: |
+        #     sudo apt-get update
+        #     sudo apt-get install -y build-essential curl libssl-dev
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+
+      - name: Install app dependencies
+        run: cargo install cargo-packager --locked
+
+      - name: Build CLI
+        run: cargo build --release
+
+      - name: Package Binary
+        run: cargo packager --release --verbose
+
+      - name: Rename CLI
+        run: mv target/release/${{ matrix.cli-name }} target/release/${{ matrix.cli-artifact }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-release-artifacts
+          path: |
+            ${{ matrix.platform == 'macos-latest' && 'target/release/*_aarch64.dmg' || '' }}
+            ${{ matrix.platform == 'macos-latest' && 'target/release/ktr_mac_aarch64' || '' }}
+            ${{ matrix.platform == 'macos-13' && 'target/release/*_x64.dmg' || '' }}
+            ${{ matrix.platform == 'macos-13' && 'target/release/ktr_mac_x64' || '' }}
+            ${{ matrix.platform == 'ubuntu-latest' && 'target/release/PKGBUILD' || '' }}
+            ${{ matrix.platform == 'ubuntu-latest' && 'target/release/*_amd64.deb' || '' }}
+            ${{ matrix.platform == 'ubuntu-latest' && 'target/release/*_x86_64.AppImage' || '' }}
+            ${{ matrix.platform == 'ubuntu-latest' && 'target/release/ktr_linux_amd64' || '' }}
+            ${{ matrix.platform == 'windows-latest' && 'target/release/*.msi' || '' }}
+            ${{ matrix.platform == 'windows-latest' && 'target/release/*_x64-setup.exe' || '' }}
+            ${{ matrix.platform == 'windows-latest' && 'target/release/ktr_win_x64.exe' || '' }}
+
+  # Upload to GitHub release job
+  upload_to_release:
+      permissions: write-all
+      runs-on: ubuntu-latest
+      needs: [release]
+      steps:
+          - name: Download release artifacts
+            uses: actions/download-artifact@v4
+            with:
+                path: artifacts
+                merge-multiple: true
+
+          # - name: Create attestation for all builds
+          #   uses: actions/attest-build-provenance@v1
+          #   with:
+          #       subject-path: |
+          #           artifacts/PKGBUILD
+          #           artifacts/*_aarch64.dmg
+          #           artifacts/*_x64.dmg
+          #           artifacts/*_amd64.deb
+          #           artifacts/*_x86_64.AppImage
+          #           artifacts/*.msi
+          #           artifacts/*_x64-setup.exe
+          #           artifacts/ktr_win_x64.exe
+          #           artifacts/ktr_linux_amd64
+          #           artifacts/ktr_mac_x64
+          #           artifacts/ktr_mac_aarch64
+
+          - name: Release to GitHub
+            uses: softprops/action-gh-release@v2
+            with:
+                draft: true
+                generate_release_notes: true
+                tag_name: v${{ env.VERSION }}
+                files: |
+                    artifacts/PKGBUILD
+                    artifacts/*_aarch64.dmg
+                    artifacts/*_x64.dmg
+                    artifacts/*_amd64.deb
+                    artifacts/*_x86_64.AppImage
+                    artifacts/*.msi
+                    artifacts/*_x64-setup.exe
+                    artifacts/ktr_win_x64.exe
+                    artifacts/ktr_linux_amd64
+                    artifacts/ktr_mac_x64
+                    artifacts/ktr_mac_aarch64
+

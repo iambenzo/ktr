@@ -11,4 +11,15 @@ publish = false
 iced = {version="0.13.1", features = ["tokio", "advanced"]}
 kindle_clippings = { path = "../kindle_clippings"}
 rfd = "0.15.0"
-# tokio = { version = "1.41.1", features = ["rt"] }
+
+[package.metadata.packager]
+product-name = "Kindle to References"
+publisher = "iambenzo"
+authors = ["Ben Burbage"]
+description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
+identifier = "com.iambenzo.ktr"
+category = "Utility"
+homepage = "https://iambenzo.com"
+icons = ["assets/logo.png"]
+formats = ["all"]
+before-packaging-command = "cargo build --release"

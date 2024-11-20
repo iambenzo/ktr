@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use std::collections::HashMap;
 
 use iced::widget::{
@@ -85,10 +87,12 @@ impl Ktr {
             }
             Message::InputChanged(i) => {
                 self.input = i;
-                return Task::perform(
-                    parse_library(self.input.clone().unwrap()),
-                    Message::LibraryChanged,
-                );
+                if let Some(_) = self.input {
+                    return Task::perform(
+                        parse_library(self.input.clone().unwrap()),
+                        Message::LibraryChanged,
+                    );
+                }
             }
             Message::LibraryChanged(l) => {
                 self.library = l;
