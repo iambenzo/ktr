@@ -30,6 +30,8 @@ pub struct Ktr {
     template: Option<FileHandle>,
     output_dir: Option<FileHandle>,
     library: HashMap<String, Book>,
+    filter_text: String,
+    filtered_library: HashMap<String, Book>,
     selected_library: HashMap<String, Book>,
     output_created: bool,
 }
@@ -45,6 +47,9 @@ enum Message {
     UseTemplate(bool),
     TemplateChanged(Option<FileHandle>),
     BookToggled((bool, String)),
+    FilterTextChanged(String),
+    SelectAllBooks,
+    SelectNoBooks,
     ChooseOutputDir,
     OutputDirChanged(Option<FileHandle>),
     OutputCreated(bool),
@@ -87,7 +92,7 @@ impl Ktr {
             }
             Message::InputChanged(i) => {
                 self.input = i;
-                if let Some(_) = self.input {
+                if self.input.is_some() {
                     return Task::perform(
                         parse_library(self.input.clone().unwrap()),
                         Message::LibraryChanged,
@@ -96,6 +101,7 @@ impl Ktr {
             }
             Message::LibraryChanged(l) => {
                 self.library = l;
+                self.filtered_library = self.library.clone();
             }
             Message::OpenTemplate => {
                 return Task::perform(open_template(), Message::TemplateChanged)
@@ -117,6 +123,28 @@ impl Ktr {
                     self.selected_library.remove(&b);
                 }
                 // dbg!(&self.selected_library);
+            }
+            Message::FilterTextChanged(s) => {
+                self.filter_text = s;
+                if self.filter_text.is_empty() {
+                    self.filtered_library = self.library.clone();
+                } else {
+                    self.filtered_library = self
+                        .library
+                        .iter()
+                        .filter(|(k, _v)| {
+                            k.to_lowercase().contains(&self.filter_text.to_lowercase())
+                        })
+                        .map(|(k, v)| (k.clone(), v.clone()))
+                        .collect();
+                }
+                // dbg!(&self.filtered_library);
+            }
+            Message::SelectAllBooks => {
+                self.selected_library = self.library.clone();
+            }
+            Message::SelectNoBooks => {
+                self.selected_library.clear();
             }
             Message::ChooseOutputDir => {
                 return Task::perform(open_target_dir(), Message::OutputDirChanged)
@@ -231,7 +259,26 @@ impl Ktr {
         if self.library.is_empty() {
             out = out.push("No books found in your clippings file")
         } else {
-            for (title, _book) in self.library.iter() {
+            let filter_input = text_input("Search", &self.filter_text)
+                .on_input(Message::FilterTextChanged)
+                .padding(10)
+                .size(20);
+
+            let select_none_btn = button("Select None")
+                .padding(10)
+                .style(button::secondary)
+                .on_press(Message::SelectNoBooks);
+
+            let select_all_btn = button("Select All")
+                .padding(10)
+                .on_press(Message::SelectAllBooks);
+
+            out = out.push(row![filter_input]);
+            out = out
+                .push(row![select_none_btn, horizontal_space(), select_all_btn])
+                .push(Space::new(0, 20));
+
+            for (title, _book) in self.filtered_library.iter() {
                 out = out.push(
                     BookToggler::new(self.selected_library.contains_key(title))
                         .label(title)
@@ -385,6 +432,8 @@ impl Default for Ktr {
             output_dir: None,
             use_template: false,
             library: HashMap::new(),
+            filter_text: "".to_string(),
+            filtered_library: HashMap::new(),
             selected_library: HashMap::new(),
             output_created: false,
         }

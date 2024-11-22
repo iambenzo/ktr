@@ -14,12 +14,11 @@ rfd = "0.15.0"
 
 [package.metadata.packager]
 product-name = "Kindle to References"
-publisher = "iambenzo"
-authors = ["Ben Burbage"]
-description = "Converts Kindle highlights to a reference format for use in a Zettelkasten"
 identifier = "com.iambenzo.ktr"
 category = "Utility"
 homepage = "https://iambenzo.com"
+copyright = "Ben Burbage 2024"
+resources = ["Cargo.toml"]
 icons = ["assets/logo.png"]
 formats = ["all"]
 before-packaging-command = "cargo build --release"
