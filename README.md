@@ -28,7 +28,11 @@ This will give you a package that you can install for your platform under `./tar
 
 ### GitHub Releases
 
-There are [Releases](https://github.com/iambenzo/ktr/releases/latest) available. However, none of the applications are signed, which may mean you have to do some "unblocking" before you can run the apps on your machine. I haven't found this to be an issue on Linux.
+There are [Releases](https://github.com/iambenzo/ktr/releases/latest) available. However, the programs are *unsigned*. This may mean you have to do some "unblocking" before you can run the apps on your machine. I haven't found this to be an issue on Linux.
+
+I promise that I'm not doing anything nefarious on your machine, feel free to inspect the source code before using the unsigned binaries.
+
+> If this utility gains some level of popularity, I'll work out how to get the binaries signed.
 
 #### Unblocking on Mac
 
@@ -46,7 +50,13 @@ chmod +x <dmg_or_cli>
 
 #### Unblocking on Windows
 
-Right-click on the `.exe` file and select "Properties". Under the "General" tab, you'll see a checkbox near the bottom of the window labelled "Unblock" - click it. Once you done that, click "Apply" and then "Okay".
+There are two things you might need to do:
+
+The below image is for the GUI installer.
+
+![Run Anyway](./gui/assets/windows.png)
+
+For the CLI, you may also need to right-click on the `.exe` file and select "Properties". Under the "General" tab, you'll see a checkbox near the bottom of the window labelled "Unblock" - click it. Once you've done that, click "Apply" and then "Okay".
 
 
 ## Usage
